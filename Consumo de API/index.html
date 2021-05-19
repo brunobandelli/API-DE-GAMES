@@ -5,9 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loja de Games</title>
+    <hr>
+    <h4>Lista de Games</h4>
+    <ul id="games"></ul>
 </head>
 <body>
     
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    axios.get("http://localhost:45678/games").then(response => {
+        var games = response.data;                              // ARRAY DE GAMES ATRAVÉS DO AXIOS
+        var list = document.getElementById("games");            // REFERENCIA DA LISTA:  <ul id="games"></ul>
+
+        games.forEach(game =>{                                  // PARA GAME DENTRO DO ARRAY DE GAMES
+            var item = document.createElement("li");            // CRIAR UM ELEMENTO DE LISTA.
+            item.innerHTML = game.id + " - " + game.title + " - $" + game.price; //OQUE TERÁ DENTRO DO ELEMENTO.
+            list.appendChild(item);                             // ADICIONAR O ITEM A ESTA LISTA.
+        })
+    }).catch(error => {
+        console.log(error)
+    });
+
+</script>
 </html>

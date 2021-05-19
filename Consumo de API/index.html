@@ -8,18 +8,52 @@
     <hr>
     <h4>Lista de Games</h4>
     <ul id="games"></ul>
+    <hr>
+    <h4>Novo game</h4>
+    <input type="text" name="title" id="title" placeholder="Título"><br>
+    <input type="number" name="year" id="year" placeholder="ano"><br>
+    <input type="number" name="price" id="price" placeholder="Preço"><br>
+    <button type="button" onclick="createGame()">Criar</button>
 </head>
 <body>
     
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+
+        function createGame(){                                      //INPUT (PEGA OS DADOS DO FORMULÁRIO)
+            var titleInput = document.getElementById("title");
+            var yearInput = document.getElementById("year");
+            var priceInput = document.getElementById("price");
+
+            var game = {                                            //CAMPOS (ENVIA OS DADOS PARA O JSON)
+                title: titleInput.value,
+                year: yearInput.value,
+                price: priceInput.value
+            }
+
+            axios.post("http://localhost:45678/game",game).then(response =>{        // (ENVIA O JSON PARA A API)
+                alert("Game Cadastrado!")
+            }).catch(err =>{
+                console.log(err);
+            });
+
+        }
+
+
+
     axios.get("http://localhost:45678/games").then(response => {
         var games = response.data;                              // ARRAY DE GAMES ATRAVÉS DO AXIOS
         var list = document.getElementById("games");            // REFERENCIA DA LISTA:  <ul id="games"></ul>
 
         games.forEach(game =>{                                  // PARA GAME DENTRO DO ARRAY DE GAMES
             var item = document.createElement("li");            // CRIAR UM ELEMENTO DE LISTA.
+
+            item.setAttribute("data-id",game.id);
+            item.setAttribute("data-title",game.title);
+            item.setAttribute("data-year", game.year);
+            item.setAttribute("data-price",game.price);
+
             item.innerHTML = game.id + " - " + game.title + " - $" + game.price; //OQUE TERÁ DENTRO DO ELEMENTO.
             list.appendChild(item);                             // ADICIONAR O ITEM A ESTA LISTA.
         })

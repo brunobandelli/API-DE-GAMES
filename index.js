@@ -29,6 +29,21 @@ var DB = {
             year: 2017,
             price: 15
         },
+    ],
+
+    users: [
+        {
+            id: 1,
+            name: "Bruno Bandelli",
+            email: "brunobandelli@tecnologyhub.com",
+            password: "nodejs<3"
+        },
+        {
+            id: 20,
+            name: "Carlos Bandelli",
+            email: "carlosbandelli@tecnologyhub.com",
+            password: "java123"
+        }
     ]
 }
 
@@ -115,6 +130,33 @@ app.put("/game/:id", (req, res)=> {
         }
     }
 })
+
+app.post("/auth",(req, res) => {
+
+    var {email, password} = req.body;                           // CAMPOS QUE API IRÁ RECEBER DO CORPO DA REQUISIÇÃO QUE O USUARIO MANDAR
+
+    if(email != undefined){
+
+        var user = DB.users.find(u => u.email == email);        // VERIFICÁ SE O EMAIL É VALIDO DENTRO DO BANCO DE DADOS
+        if(user != undefined){
+
+            if(user.password == password){                      // VERIFICA SE A SENHA PE VALIDA DENTRO DO BANCO DE DADOS
+                res.status(200);
+                res.json({token:"TOKEN FALSO!"});              // FAZ A AUTENTICAÇÃO DE LOGIN E SENHA POR TOKEN VIA JWT
+            }else{
+                res.status(401);
+                res.json({err: "CREDENCIAIS INVÁLIDAS!"});
+            }
+        }else{
+            res.status(404);
+            res.json({err: "O E-MAIL ENVIADO NÃO EXISTE NA BASE DE DADOS!"});
+        }
+    }else{
+        res.status(400);
+        res.json({err: "O E-MAIL ENVIADO É INVÁLIDO!"});
+    }
+});
+
 
 app.listen(45678,() => {
     console.log("API RODANDO!")

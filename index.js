@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const cors = require("cors");
+const cors = require("cors");                   //LIBERAÇÃO DE CONSUMO DE API
+const jwt = require("jsonwebtoken");            //BIBLIOTECA TOKEN
 
-app.use(cors());
+const JWTSecret = "qewfubqwefownconndweo"       //CHAVE MESTRA DE TOKEN
 
+app.use(cors());                                
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
@@ -141,8 +143,18 @@ app.post("/auth",(req, res) => {
         if(user != undefined){
 
             if(user.password == password){                      // VERIFICA SE A SENHA PE VALIDA DENTRO DO BANCO DE DADOS
-                res.status(200);
-                res.json({token:"TOKEN FALSO!"});              // FAZ A AUTENTICAÇÃO DE LOGIN E SENHA POR TOKEN VIA JWT
+
+                jwt.sign({id: user.id, email: user.email},JWTSecret,{expiresIn:'48h'},(err, token) =>{ //GERAÇÃO DE TOKEN PESSOAL
+                    if(err){
+                        res.status(400);
+                        res.json({err:"Falha Interna"});
+                    }else{
+
+                        res.status(200);
+                        res.json({token: token})                // PEGA O TOKEN GERADO A CIMA
+                    }
+
+                });     
             }else{
                 res.status(401);
                 res.json({err: "CREDENCIAIS INVÁLIDAS!"});

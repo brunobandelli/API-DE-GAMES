@@ -10,6 +10,33 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
+function auth(req, res, next){
+    const authToken = req.headers['authorization']
+
+    if(authToken != undefined){
+
+        const bearer = authToken.split(' ');
+        var token = bearer[1]
+
+        jwt.verify(token,JWTSecret,(err, data) => {
+            if(err){
+                res.status(401);
+                res.json({err: "Token Inválido!"});
+            }else{
+
+                req.token = token;
+                req.loggedUser = {id: data.id,email: data.email};
+                req.empresa = "TecnologyHub"
+                next();
+            }
+        })
+
+    }else{
+        res.status(401);
+        res.json({err: "Token Inválido!"})
+    }
+}
+
 var DB = {
     games: [
 
@@ -49,13 +76,13 @@ var DB = {
     ]
 }
 
-app.get("/games", (req, res) =>{
+app.get("/games",auth,(req, res) =>{
     res.statusCode = 200
-    res.json(DB.games);
+    res.json({empresa: req.empresa, user: req.loggedUser, games: DB.games});
     
 })
 
-app.get("/game/:id",(req, res) =>{
+app.get("/game/:id",auth,(req, res) =>{
 
     if(isNaN(req.params.id)){
         res.sendStatus(400);                //BAD REQUEST
@@ -73,7 +100,7 @@ app.get("/game/:id",(req, res) =>{
 
 })
 
-app.post("/game",(req, res) =>{
+app.post("/game",auth,(req, res) =>{
     
     var {title, price, year} = req.body;
 
@@ -88,7 +115,7 @@ app.post("/game",(req, res) =>{
 
 })
 
-app.delete("/game/:id", (req, res) =>{
+app.delete("/game/:id",auth,(req, res) =>{
     if(isNaN(req.params.id)){
         res.sendStatus(400);                //BAD REQUEST
     }else{

@@ -35,17 +35,32 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 
-    function login(){
-        var emailField = document.getElementById("email");
-        var passwordField = docu
-    }
-
-
     var axiosConfig = {
         headers: {
-            Authorization: "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJicnVub2JhbmRlbGxpQHRlY25vbG9neWh1Yi5jb20iLCJpYXQiOjE2MjIwNzQyOTQsImV4cCI6MTYyMjI0NzA5NH0.tmUl_Y0mus_WzlSWN0wjLrQ2Px41hKRc-DlOojdsO7Y"
+            Authorization: "Bearer " + localStorage.getItem("token")
         }
     }
+
+    function login(){
+        var emailField = document.getElementById("email");
+        var passwordField = document.getElementById("password")
+
+        var email = emailField.value;
+        var password = passwordField.value;
+
+        axios.post("http://localhost:45678/auth",{
+            email,
+            password
+        }).then(res =>{
+            var token = res.data.token;
+            localStorage.setItem("token", token);
+            axiosConfig.headers.Authorization = "Bearer " + localStorage.getItem("token")
+        }).catch(err => {
+            alert("LOGIN INCORRETO...");
+
+        })
+    }
+
 
         function createGame(){                                      //INPUT (PEGA OS DADOS DO FORMULÁRIO)
             var titleInput = document.getElementById("title");
@@ -58,7 +73,7 @@
                 price: priceInput.value
             }
 
-            axios.post("http://localhost:45678/game",game).then(response =>{        // (ENVIA O JSON PARA A API)
+            axios.post("http://localhost:45678/game",game,axiosConfig).then(response =>{        // (ENVIA O JSON PARA A API)
                 alert("Game Cadastrado!")
             }).catch(err =>{
                 console.log(err);
@@ -68,7 +83,7 @@
 
         function deleteGame(listItem){
             var id = listItem.getAttribute("data-id")
-            axios.delete("http://localhost:45678/game/"+id).then(response =>{
+            axios.delete("http://localhost:45678/game/"+id,axiosConfig).then(response =>{
                 alert("Game Deletado!")
             }).catch(err =>{
                 console.log(err)
@@ -101,7 +116,7 @@
             var id = idInput.value;
 
 
-            axios.put("http://localhost:45678/game/"+id,game).then(response =>{        // (ENVIA O JSON PARA A API)
+            axios.put("http://localhost:45678/game/"+id,game,axiosConfig).then(response =>{        // (ENVIA O JSON PARA A API)
                 alert("Game Atualizado!")
             }).catch(err =>{
                 console.log(err);

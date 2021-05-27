@@ -5,6 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loja de Games</title>
+
+    <h2>Login</h2>
+    <input type="text" name="email" id="email" placeholder="email@email.com"><br>
+    <input type="text" name="password" id="password" placeholder="*******">
+    <button onclick="login()">Entrar</button>
+
+
     <hr>
     <h4>Lista de Games</h4>
     <ul id="games"></ul>
@@ -27,6 +34,18 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+
+    function login(){
+        var emailField = document.getElementById("email");
+        var passwordField = docu
+    }
+
+
+    var axiosConfig = {
+        headers: {
+            Authorization: "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJicnVub2JhbmRlbGxpQHRlY25vbG9neWh1Yi5jb20iLCJpYXQiOjE2MjIwNzQyOTQsImV4cCI6MTYyMjI0NzA5NH0.tmUl_Y0mus_WzlSWN0wjLrQ2Px41hKRc-DlOojdsO7Y"
+        }
+    }
 
         function createGame(){                                      //INPUT (PEGA OS DADOS DO FORMULÁRIO)
             var titleInput = document.getElementById("title");
@@ -90,7 +109,7 @@
 
         }
 
-    axios.get("http://localhost:45678/games").then(response => {
+    axios.get("http://localhost:45678/games",axiosConfig).then(response => {
         var games = response.data;                              // ARRAY DE GAMES ATRAVÉS DO AXIOS
         var list = document.getElementById("games");            // REFERENCIA DA LISTA:  <ul id="games"></ul>
 
